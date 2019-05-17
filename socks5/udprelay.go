@@ -35,12 +35,12 @@ func relayTakeOver(c *connection, srv *Server) {
 	}
 	r.client.IP = r.initConn.RemoteAddr().(*net.TCPAddr).IP
 	if r.peer.conn, err = net.ListenUDP("udp", nil); err != nil {
-		r.client.conn.Close()
+		_ = r.client.conn.Close()
 		return
 	}
 	if err := r.process(); err != nil {
-		r.client.conn.Close()
-		r.peer.conn.Close()
+		_ = r.client.conn.Close()
+		_ = r.peer.conn.Close()
 		return
 	}
 }
@@ -103,9 +103,9 @@ func (r *relay) process() (err error) {
 }
 
 func (r *relay) close() {
-	r.initConn.Close()
-	r.peer.conn.Close()
-	r.client.conn.Close()
+	_ = r.initConn.Close()
+	_ = r.peer.conn.Close()
+	_ = r.client.conn.Close()
 }
 
 func (r *relay) proxyUDP() {

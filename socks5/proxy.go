@@ -137,7 +137,7 @@ func (c *socksConn) authenticate(b []byte) (err error) {
 
 			u, p, err := validateAuthData(b[:cap(b)])
 			if err != nil {
-				c.cC.writeWithDeadline([]byte{uPassHandshakeVersion, responseUnknownError}, c.server.HandshakeStepTimeLimit)
+				_, _ = c.cC.writeWithDeadline([]byte{uPassHandshakeVersion, responseUnknownError}, c.server.HandshakeStepTimeLimit)
 				return err
 			}
 			if ok, c.data = c.server.Authenticate(u, p); !ok {
@@ -150,7 +150,7 @@ func (c *socksConn) authenticate(b []byte) (err error) {
 			continue
 		}
 	}
-	c.cC.writeWithDeadline([]byte{socks5Version, authMethodRejected}, c.server.HandshakeStepTimeLimit)
+	_, _ = c.cC.writeWithDeadline([]byte{socks5Version, authMethodRejected}, c.server.HandshakeStepTimeLimit)
 	return customError{errNoAuthMethod, methods}
 }
 
@@ -300,8 +300,8 @@ func evalDestination(network string, data []byte) (dst net.Addr, addrLen int, er
 }
 
 func (c *socksConn) close() {
-	c.sC.Close()
-	c.cC.Close()
+	_ = c.sC.Close()
+	_ = c.cC.Close()
 }
 
 func copyAndQuit(c *socksConn) {

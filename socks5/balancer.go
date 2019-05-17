@@ -66,7 +66,7 @@ func (a *authenticator) run() {
 		a.authQueue <- a
 		work := <-a.work
 		if err := work.handshake(); err != nil {
-			work.cC.Close()
+			_ = work.cC.Close()
 		} else {
 			worker := <-a.reqHandlerQueue
 			worker.work <- work
@@ -79,9 +79,9 @@ func (rH *reqHandler) run() {
 		rH.reqHandlerQueue <- rH
 		work := <-rH.work
 		if err := work.processRequest(); err != nil {
-			work.cC.Close()
+			_ = work.cC.Close()
 			if work.sC != nil {
-				work.sC.Close()
+				_ = work.sC.Close()
 			}
 		}
 	}
